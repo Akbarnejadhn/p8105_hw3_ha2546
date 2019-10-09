@@ -57,7 +57,12 @@ aisle_fav_plot
 
 
 ```{r}
-
-
+x = instacart %>% 
+  select(product_name, aisle) %>% 
+  filter(aisle == c("baking ingredients", "dog food care", "packaged vegetables fruits")) %>% 
+  group_by(product_name, aisle) %>% 
+  summarize(count = n()) %>% 
+  arrange(desc(count)) %>% 
+  top_n(3, count)
 ```
 
