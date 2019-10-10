@@ -54,7 +54,7 @@ aisle_fav_n
 aisle_fav_plot
 ```
 
-
+**top_n doesn't seem working**
 
 ```{r}
 x = instacart %>% 
@@ -64,5 +64,22 @@ x = instacart %>%
   summarize(count = n()) %>% 
   arrange(desc(count)) %>% 
   top_n(3, count)
+```
+
+In this part,
+
+```{r}
+hours_days_products = instacart %>% 
+  select(product_name, order_dow, order_hour_of_day) %>% 
+  filter(product_name == c("Pink Lady Apples", "Coffee Ice Cream")) %>% 
+  group_by(product_name, order_dow) %>% 
+  summarize(
+    hours_mean = mean(order_hour_of_day)
+  ) %>% 
+  pivot_wider(
+    names_from = order_dow,
+    values_from = hours_mean
+  ) %>% 
+  knitr::kable(digits = 1)
 ```
 
