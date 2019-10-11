@@ -35,17 +35,16 @@ data("instacart")
 
 In the first problem, we are interested in exploring the _instacart_ dataset. This dataset stores information about online grocery shopping from 2017. The datset contains `r nrow(instacart)` observations of `r n_distinct(pull(instacart, order_id))` unique orders of `r n_distinct(pull(instacart, product_name))` differennt products. There are `r ncol(instacart)` variables associated with these rows such as _order_dow_ (the day of the week that the order has been placed), _order_hour_of_day_ (the time of the day that the order has been placed), _product_name_ (the item purchased), _aisle_ (the aisle that the item has chosen from), etc. We can take differenvt samples from this dataset.
 
-# Problem1
+## Problem1
 
 How many aisles are there, and which aisles are the most items ordered from?
 I grouped the dtaset by the aisles, and understood that there are total of 134 different isles. Then I counted the number of times items have been ordered from each isle. By further arranging this column in descending order, I found the most popular isles. Top five aisles with the most items ordered from are fresh vegetables, fresh fruits, packaged vegetable fruits, yogurt, packaged cheese.I then made a plot that shows the number of items ordered in each aisle (only for aisles with more than 10000 items ordered). For this purpose I made a bar plot that shows the aisle names on x axis and the number of items ordered on y axis.
 
-**should we arrange the columns from most to least? how?**
 
 ```{r instacart}
 
 aisle_fav_n = instacart %>% 
-  group_by(aisle) %>% 
+  # group_by(aisle) %>% 
   count(aisle, name = "aisle_order_n") %>% 
   arrange(desc(aisle_order_n))
 
@@ -65,23 +64,24 @@ aisle_fav_n
 aisle_fav_plot
 ```
 
-**top_n doesn't seem working**
+
 
 ```{r}
-x = instacart %>% 
-  select(product_name, aisle) %>% 
+
+top3_items = instacart %>% 
   filter(aisle == c("baking ingredients", "dog food care", "packaged vegetables fruits")) %>% 
-  group_by(product_name, aisle) %>% 
-  summarize(count = n()) %>% 
-  arrange(desc(count)) %>% 
-  top_n(3, count)
+  group_by(aisle, product_name) %>%
+  summarize(
+    count = n()
+    ) %>% 
+  top_n(3, count) %>% 
+  knitr::kable()
 ```
 
 In this part,
 
 ```{r}
 hours_days_products = instacart %>% 
-  select(product_name, order_dow, order_hour_of_day) %>% 
   filter(product_name == c("Pink Lady Apples", "Coffee Ice Cream")) %>% 
   group_by(product_name, order_dow) %>% 
   summarize(
@@ -90,7 +90,50 @@ hours_days_products = instacart %>%
   pivot_wider(
     names_from = order_dow,
     values_from = hours_mean
-  ) %>% 
+  ) %>%
+    rename(
+      Sun = `0`, Mon = `1`, Tue = `2`, Wed = `3`, Thr = `4`, Fri = `5`, Sat = `6`
+      ) %>% 
   knitr::kable(digits = 1)
+```
+
+## Problem 2
+
+```{r problem2_a}
+
+data("brfss_smart2010") 
+
+brfss_data = brfss_smart2010 %>% 
+  janitor::clean_names() %>% 
+  filter(topic == "Overall Health") %>% 
+  mutate(
+    response = factor(response, levels = c("Poor", "Fair", "Good", "Very good", "Excellent"), ordered = TRUE)
+  )
+```
+
+```{r}
+brfss_location_2002 = brfss_data %>%
+  filter(year == "2002") %>% 
+  group_by(locationabbr) %>% 
+  summarize(
+    distinct_location = n_distinct(locationdesc)
+    ) %>% 
+  filter(distinct_location >= 7)
+
+nrow(brfss_location_2002)
+
+brfss_location_2010 = brfss_data %>%
+  filter(year == "2010") %>% 
+  group_by(locationabbr) %>% 
+  summarize(
+    distinct_location = n_distinct(locationdesc)
+    ) %>% 
+  filter(distinct_location >= 7)
+
+nrow(brfss_location_2010)
+```
+
+```{r}
+
 ```
 
