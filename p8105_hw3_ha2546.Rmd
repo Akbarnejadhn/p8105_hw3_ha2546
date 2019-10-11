@@ -19,7 +19,21 @@ knitr::opts_chunk$set(
   out.width = "90%"
   )
 
+library(p8105.datasets)
+data("instacart")
 ```
+
+```{r random_sample}
+
+# set.seed(5)
+# random_sample = instacart %>% 
+#   filter(
+#   sample(pull(instacart, order_id))
+#   )
+
+```
+
+In the first problem, we are interested in exploring the _instacart_ dataset. This dataset stores information about online grocery shopping from 2017. The datset contains `r nrow(instacart)` observations of `r n_distinct(pull(instacart, order_id))` unique orders of `r n_distinct(pull(instacart, product_name))` differennt products. There are `r ncol(instacart)` variables associated with these rows such as _order_dow_ (the day of the week that the order has been placed), _order_hour_of_day_ (the time of the day that the order has been placed), _product_name_ (the item purchased), _aisle_ (the aisle that the item has chosen from), etc. We can take differenvt samples from this dataset.
 
 # Problem1
 
@@ -30,9 +44,6 @@ I grouped the dtaset by the aisles, and understood that there are total of 134 d
 
 ```{r instacart}
 
-library(p8105.datasets)
-data("instacart")
-
 aisle_fav_n = instacart %>% 
   group_by(aisle) %>% 
   count(aisle, name = "aisle_order_n") %>% 
@@ -40,7 +51,7 @@ aisle_fav_n = instacart %>%
 
 aisle_fav_plot = aisle_fav_n %>% 
   filter(aisle_order_n > 10000) %>% 
-  ggplot(aes(x = aisle, y = aisle_order_n)) +
+  ggplot(aes(x = reorder(aisle, -aisle_order_n), y = aisle_order_n)) +
   geom_bar(stat="identity", width=0.5, color="blue", fill="white") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   labs(
