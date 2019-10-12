@@ -25,7 +25,8 @@ options(
 )
 scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
-theme_set(theme_minimal() + theme(legend.position = "bottom"))
+theme_set(theme_classic())
+# theme(legend.position = "bottom"))
 
 library(p8105.datasets)
 data("instacart")
@@ -144,7 +145,7 @@ brfss_location_2010 = brfss_data %>%
 
 We observed that during 2002, there were `r nrow(brfss_location_2002)` locations satissfying this condition, and during 2010 this number was `r nrow(brfss_location_2010)`.
 
-**ungroup did not work**
+In this part, I made a subset of data from excellent responses, then I summarized the mean of the data_value variable in different US states and then made a spagetti plot of the mean crude prevalence percentage (_data_value_) against different years.
 ```{r}
 
   brfss_exc = brfss_data %>%
@@ -159,20 +160,21 @@ We observed that during 2002, there were `r nrow(brfss_location_2002)` locations
 brfss_exc_spagetti = brfss_exc %>% 
   ggplot(aes(x = year, y = mean_exc_location, color = locationabbr)) +
   geom_line() +
-    theme_classic() +
     labs(
-    title = "Mean data_value 2002 - 2010 among US States",
+    title = "Mean Prevalence 2002 - 2010 among US States",
     x = "Year",
-    y = "Mean data_value",
+    y = "Mean Prevalence (%)",
     caption = "From BRFSS Excellent Responses")
 
 brfss_exc_spagetti + labs(color = "STATES")
 
 ```
 
+
  2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State
 ```{r}
 library("patchwork")
+
 graph_2006 = brfss_data %>%
   filter(
     year == "2006",
@@ -181,6 +183,7 @@ graph_2006 = brfss_data %>%
   group_by(locationdesc) %>%
   ggplot(aes(x = response, y = data_value)) +
   geom_point(aes(color = locationdesc), alpha = .5) +
+  geom_line()
   labs(
     title = "Distribution of Data Values - 2006",
     x = "Response Level",
@@ -218,6 +221,6 @@ graph_2010 = brfss_data %>%
 
 ## Problem 3
 ```{r}
-active_data = read_csv(".acce")
+
 ```
 
