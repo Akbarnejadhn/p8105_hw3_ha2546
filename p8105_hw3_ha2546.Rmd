@@ -224,6 +224,20 @@ plot_2010 = brfss_data %>%
 
 ## Problem 3
 ```{r prob3_load}
+accel_data = read_csv("./data/accel_data.csv") 
+
+accel_data_tidy = accel_data %>% 
+  janitor::clean_names() %>% 
+  pivot_longer(
+    cols = activity_1:activity_1440,
+    names_to = "activity_number",
+    values_to = "value",
+    names_prefix = "activity_"
+  ) %>%
+  select(activity_number, week, day, day_id, value) %>% 
+  mutate(
+    is_weekend = (day == "Saturday" | day == "Sunday")
+  )
 
 ```
 
