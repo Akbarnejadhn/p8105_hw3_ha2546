@@ -35,7 +35,7 @@ data("instacart")
 ```{r random_sample}
 
 # set.seed(5)
-# random_sample = instacart %>% 
+# random_sample = instacart %>%
 #   filter(
 #   sample(pull(instacart, order_id))
 #   )
@@ -196,8 +196,6 @@ plot_2006 = brfss_data %>%
   guides(color = FALSE, size = FALSE)
 
 
-
-
 plot_2010 = brfss_data %>%
   filter(
     year == "2010",
@@ -239,5 +237,49 @@ accel_data_tidy = accel_data %>%
     is_weekend = (day == "Saturday" | day == "Sunday")
   )
 
+accel_data_tidy
+```
+ DESCRIBE IT
+ 
+```{r}
+
+total_activity_table = accel_data_tidy %>% 
+  group_by(day_id) %>% 
+  summarise(
+    total_activity = sum(value)
+  )
+
+total_activity_plot = total_activity_table %>% 
+  ggplot(aes(x = day_id, y = total_activity)) +
+  geom_point() + 
+  geom_line()
+
+total_activity_table
+total_activity_plot
+```
+Describe Trends
+
+```{r}
+
+activity_day_amount = accel_data_tidy %>% 
+  mutate(
+    activity_number = as.numeric(as.character(activity_number))
+  ) %>% 
+  group_by(day, activity_number) %>% 
+  summarize(
+    mean_activity_day = mean(value)
+  ) %>% 
+  ggplot(aes(x = activity_number, y = mean_activity_day, color = day, group = day)) +
+  geom_smooth(se = FALSE) +
+  labs(
+    title = "Average Activity over 24 hours for Each Day",
+    x = "Time Course (hours)",
+    y = "Average Activity Amount",
+    caption = "Measured over 5 weeks"
+  ) +
+  scale_x_discrete(limit = c(240, 480, 720, 960, 1200, 1440),
+                   labels = c("4", "8", "12", "16", "20", "24"))
+
+activity_day_amount
 ```
 
