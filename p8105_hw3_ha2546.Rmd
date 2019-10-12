@@ -99,6 +99,8 @@ hours_days_products = instacart %>%
 
 ## Problem 2
 
+In this part, I worked with _BRFSS_ dataset. First, I cleaned the names and made a subset of the data which is focused on the _Overall Health_, then I transformed response levels as ordered factors from poor to excellent.
+
 ```{r problem2_a}
 
 data("brfss_smart2010") 
@@ -111,6 +113,8 @@ brfss_data = brfss_smart2010 %>%
   )
 ```
 
+On the next step, I needed to know which states has more or equal than 7 locations in both 2002 and 20010.
+
 ```{r}
 brfss_location_2002 = brfss_data %>%
   filter(year == "2002") %>% 
@@ -120,7 +124,6 @@ brfss_location_2002 = brfss_data %>%
     ) %>% 
   filter(distinct_location >= 7)
 
-nrow(brfss_location_2002)
 
 brfss_location_2010 = brfss_data %>%
   filter(year == "2010") %>% 
@@ -129,11 +132,69 @@ brfss_location_2010 = brfss_data %>%
     distinct_location = n_distinct(locationdesc)
     ) %>% 
   filter(distinct_location >= 7)
-
-nrow(brfss_location_2010)
 ```
 
+We observed that during 2002, there were `r nrow(brfss_location_2002)` locations satissfying this condition, and during 2010 this number was `r nrow(brfss_location_2010)`.
+
+**ungroup did not work**
 ```{r}
+
+# Ex_spagettiplot = brfss_data %>% 
+#   filter(
+#     response == "Excellent"
+#   ) %>% 
+#   group_by(locationabbr) %>% 
+#   summarize(
+#     mean_location_data = mean(data_value)
+#   ) %>% 
+#   ungroup() %>% 
+#   select(year, locationabbr, mean_location_data)
+
+```
+
+ **geom_smooth doesn't work**
+ 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State
+```{r}
+library("patchwork")
+graph_2006 = brfss_data %>%
+  filter(
+    year == "2006",
+    locationabbr == "NY"
+  ) %>%
+  group_by(locationdesc) %>%
+  ggplot(aes(x = response, y = data_value)) +
+  geom_point(aes(color = locationdesc), alpha = .5) +
+  labs(
+    title = "Distribution of Data Values for Response Levels in NY Counties",
+    x = "Response Level",
+    y = "Data Value",
+    caption = NULL
+  ) +
+  theme_classic() +
+  theme(legend.position = "bottom")
+
+
+
+graph_2010 = brfss_data %>%
+  filter(
+    year == "2010",
+    locationabbr == "NY"
+  ) %>%
+  group_by(locationdesc) %>%
+  ggplot(aes(x = response, y = data_value)) +
+  geom_point(aes(color = locationdesc), alpha = .5) +
+  labs(
+    title = "Distribution of Data Values for Response Levels in NY Counties",
+    x = "Response Level",
+    y = "Data Value",
+    caption = NULL
+  ) +
+  theme_classic() +
+  theme(legend.position = "bottom")
+
+
+(graph_2006 + graph_2010)
+
 
 ```
 
