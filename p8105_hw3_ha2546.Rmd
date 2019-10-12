@@ -51,8 +51,8 @@ aisle_fav_n = instacart %>%
 aisle_fav_plot = aisle_fav_n %>% 
   filter(aisle_order_n > 10000) %>% 
   ggplot(aes(x = reorder(aisle, -aisle_order_n), y = aisle_order_n)) +
-  geom_bar(stat="identity", width=0.5, color="blue", fill="white") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  geom_bar(stat="identity", width=0.5, fill="blue") +
+  theme(axis.text.x = element_text(angle = 80, hjust = 1)) +
   labs(
     title = "Number of Orders in Favorite Aisles",
     x = "Aisle name",
@@ -165,7 +165,7 @@ graph_2006 = brfss_data %>%
   ggplot(aes(x = response, y = data_value)) +
   geom_point(aes(color = locationdesc), alpha = .5) +
   labs(
-    title = "Distribution of Data Values for Response Levels in NY Counties",
+    title = "Distribution of Data Values - 2006",
     x = "Response Level",
     y = "Data Value",
     caption = NULL
@@ -182,19 +182,25 @@ graph_2010 = brfss_data %>%
   ) %>%
   group_by(locationdesc) %>%
   ggplot(aes(x = response, y = data_value)) +
-  geom_point(aes(color = locationdesc), alpha = .5) +
+  geom_bar(stat="identity", width=0.5, aes(color = response), alpha = .5) +
   labs(
-    title = "Distribution of Data Values for Response Levels in NY Counties",
+    title = "Distribution of Data Values-2010",
     x = "Response Level",
     y = "Data Value",
     caption = NULL
   ) +
-  theme_classic() +
+  facet_grid(. ~ locationdesc)
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   theme(legend.position = "bottom")
 
 
-(graph_2006 + graph_2010)
+(graph_2006 / graph_2010)
 
+
+```
+
+## Problem 3
+```{r}
 
 ```
 
