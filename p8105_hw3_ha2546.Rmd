@@ -1,7 +1,7 @@
 ---
 title: "p8105_hw3_ha2546"
 author: "Hana Akbarnejad"
-date: "10/9/2019"
+date: "10/13/2019"
 output: github_document
 ---
 
@@ -296,7 +296,9 @@ total_activity_plot
 
 In this part of problem 3, I created a variable called _total_activity_ that shows the total activity for each day, and I then created a table showing these totals. As the trends were not very intuitive to me from the values in the table, I also created a very rough point and line plot to explore any trends. Although there are a lot of fluctuations through this data, we can rughly observe that just by scanning the results, it seems that the person have been on average a little more active during the first half of days he was tested on.
 
-```{r}
+**Problem3_c**
+
+```{r problem3_c}
 
 activity_day_amount = accel_data_tidy %>% 
   mutate(
@@ -320,3 +322,6 @@ activity_day_amount = accel_data_tidy %>%
 activity_day_amount
 ```
 
+In the last part of problem 3, I was interested in how each day of the week's average activity amount varies during the time course of the data recording process (24 hours). To this end, after tidying, grouping, and summarizing data where suitable, I used geom_smooth to be able to see the trends (I had initially used geom_point and geom_line, but the data had too many points and so the plot wasn't very readable and comprehendable. I know the function geom_smooth works on continuous variables and out variables are discrete here, but I could not think of an alternative plot which can help me see the trends this clear).
+
+As we can see in the plot, in Fridays the person had been on average most active later at evening, and during Sundays, he had the majority of his active time mid-day. Earlier in day the activity is low which probably shows the time the person had been sleeping.
