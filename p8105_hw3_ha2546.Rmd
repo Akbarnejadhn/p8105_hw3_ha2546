@@ -10,6 +10,7 @@ output: github_document
 library(tidyverse)
 library(viridis)
 library(ggridges)
+library(p8105.datasets)
 
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -28,9 +29,9 @@ scale_fill_discrete = scale_fill_viridis_d
 theme_set(theme_classic())
 ```
 
-```{r Prob1_a}
+## Problem1
+```{r Prob1_desc}
 
-library(p8105.datasets)
 data("instacart")
 
 instacart_desc = instacart %>% 
@@ -39,15 +40,14 @@ instacart_desc = instacart %>%
   )
 ```
 
+**Dataset Description**
+
+
 In the first problem, we are interested in exploring the _instacart_ dataset. This dataset stores information about online grocery shopping in 2017. The datset contains `r nrow(instacart)` observations of `r n_distinct(pull(instacart, order_id))` unique orders of `r n_distinct(pull(instacart, product_name))` differennt products. There are `r ncol(instacart)` variables associated with these rows such as _order_dow_ (the day of the week that the order has been placed), _order_hour_of_day_ (the time of the day that the order has been placed), _product_name_ (the item purchased), _aisle_ (the aisle that the item has chosen from), etc. For example, we can see that ordere with _order_id_ 112 contained `r nrow(instacart_desc)` items including `r head(pull(instacart_desc, product_name), 3)` from `r head(pull(instacart_desc, department), 3)` departments. These products has been chosen from aisles `r head(pull(instacart_desc, aisle_id), 3)` which are associated with the `r head(pull(instacart_desc, aisle), 3)` aisles, respectively. This order has been placed on Thursday at `r head(pull(instacart_desc, order_hour_of_day), 1)`, and `r head(pull(instacart_desc, days_since_prior_order), 1)` days after the pripr order of this customer (with the customer ID: `r head(pull(instacart_desc, user_id), 1)`).
 
-## Problem1
+**Parts a and b**
 
-How many aisles are there, and which aisles are the most items ordered from?
-I grouped the dtaset by the aisles, and understood that there are total of 134 different isles. Then I counted the number of times items have been ordered from each isle. By further arranging this column in descending order, I found the most popular isles. Top five aisles with the most items ordered from are fresh vegetables, fresh fruits, packaged vegetable fruits, yogurt, packaged cheese.I then made a plot that shows the number of items ordered in each aisle (only for aisles with more than 10000 items ordered). For this purpose I made a bar plot that shows the aisle names on x axis and the number of items ordered on y axis.
-
-
-```{r instacart}
+```{r problem1_parta&b}
 
 aisle_fav_n = instacart %>% 
   # group_by(aisle) %>% 
@@ -60,19 +60,22 @@ aisle_fav_plot = aisle_fav_n %>%
   geom_bar(stat="identity", width=0.5, fill="blue") +
   theme(axis.text.x = element_text(angle = 80, hjust = 1)) +
   labs(
-    title = "Number of Orders in Favorite Aisles",
-    x = "Aisle name",
-    y = "Number of orders",
-    caption = "Plot 1"
+    title = "Number of Total Orders from Favorite Aisles",
+    x = "Aisle Name",
+    y = "Number of Orders",
+    caption = "only aisles with more than 10000 items ordered included"
   )
 
 aisle_fav_n
 aisle_fav_plot
 ```
 
+In this part, I wanted to figure out how many distinct aisles we have in the dataset, and which were the favorite ones. So, I grouped the dtaset by aisles, and understood that there are total of `r nrow(aisle_fav_n)` different isles. Then I counted the number of times that have been ordered from each isle. By further arranging this column in descending order, I found the most popular isles. Top five aisles with the most items ordered from are `r head(pull(aisle_fav_n, aisle),10)`.I then made a plot that shows the number of items ordered in each aisle (only for aisles with more than 10000 items ordered). For this purpose I made the above bar plot that shows the aisle names on x axis and the number of items ordered on y axis (note that only aisles with more than 10000 items ordered included).
 
 
-```{r}
+**Part c**
+
+```{r problem1_partc}
 
 top3_items = instacart %>% 
   filter(aisle == c("baking ingredients", "dog food care", "packaged vegetables fruits")) %>% 
@@ -82,11 +85,16 @@ top3_items = instacart %>%
     ) %>% 
   top_n(3, count) %>% 
   knitr::kable()
+
+top3_items
 ```
 
-In this part,
+In part c of problem 1 was focused on figuring out the top 3 items which was ordered from aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”. I grouped the data by aisle and product names, counted the number of times each item was ordered and presented the result in the table above.
 
-```{r}
+**Part d**
+
+```{r problem1_b, warning = FALSE}
+
 hours_days_products = instacart %>% 
   filter(product_name == c("Pink Lady Apples", "Coffee Ice Cream")) %>% 
   group_by(product_name, order_dow) %>% 
@@ -101,7 +109,11 @@ hours_days_products = instacart %>%
       Sun = `0`, Mon = `1`, Tue = `2`, Wed = `3`, Thr = `4`, Fri = `5`, Sat = `6`
       ) %>% 
   knitr::kable(digits = 1)
+
+hours_days_products
 ```
+
+In the last part, I worked on the finding the mean hour of day at which _Pink Lady Apples_ and _Coffee Ice Cream_ were ordered on each day of the week. I made a table which is easy to grasp, with days of the week as variables and mentioned products as rows, including the average hour of day at which the items were ordered.
 
 ## Problem 2
 
