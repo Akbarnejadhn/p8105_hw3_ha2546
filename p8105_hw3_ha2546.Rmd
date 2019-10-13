@@ -11,6 +11,7 @@ library(tidyverse)
 library(viridis)
 library(ggridges)
 library(p8105.datasets)
+library("patchwork")
 
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -117,9 +118,9 @@ In the last part, I worked on the finding the mean hour of day at which _Pink La
 
 ## Problem 2
 
-In this part, I worked with _BRFSS_ dataset. First, I cleaned the names and made a subset of the data which is focused on the _Overall Health_, then I transformed response levels as ordered factors from poor to excellent.
+In this part, I worked with _BRFSS_ dataset. First, I cleaned the names and made a subset of the data which is focused on the _Overall Health_, then I transformed response levels as ordered factors from poor to excellent levels.
 
-```{r problem2_a}
+```{r problem2_0}
 
 data("brfss_smart2010") 
 
@@ -131,9 +132,12 @@ brfss_data = brfss_smart2010 %>%
   )
 ```
 
-On the next step, I needed to know which states has more or equal than 7 locations in both 2002 and 20010.
+**Part a**
 
-```{r}
+On the next step, I needed to know which states has more or equal than 7 locations in both 2002 and 20010. To do this, I focused on the years (2002 or 2010), then grouped the data by States and counted the number of distincts counties in each State.
+
+```{r Problem2_a}
+
 brfss_location_2002 = brfss_data %>%
   filter(year == "2002") %>% 
   group_by(locationabbr) %>% 
@@ -152,10 +156,13 @@ brfss_location_2010 = brfss_data %>%
   filter(distinct_location >= 7)
 ```
 
-We observed that during 2002, there were `r nrow(brfss_location_2002)` locations satissfying this condition, and during 2010 this number was `r nrow(brfss_location_2010)`.
+I observed that during 2002, there were `r nrow(brfss_location_2002)` locations satissfying this condition, and during 2010 this number was `r nrow(brfss_location_2010)`.
 
-In this part, I made a subset of data from excellent responses, then I summarized the mean of the data_value variable in different US states and then made a spagetti plot that shows the mean of crude prevalence percentage ( _data_value_ ) against different years.
-```{r}
+**Part b**
+
+In this part, I made a subset of data from excellent responses, then I summarized the mean of the crude prevalence percentage variable in different US states and then made a spaghetti plot that shows the mean of crude prevalence percentage ( _data_value_ ) against different years in each of the States.
+
+```{r problem2_b}
 
   brfss_exc = brfss_data %>%
   filter(
@@ -166,7 +173,7 @@ In this part, I made a subset of data from excellent responses, then I summarize
     mean_exc_location = mean(data_value)
   )
 
-brfss_exc_spagetti = brfss_exc %>% 
+brfss_exc_spaghetti = brfss_exc %>% 
   ggplot(aes(x = year, y = mean_exc_location, color = locationabbr)) +
   geom_line() +
     labs(
@@ -175,14 +182,15 @@ brfss_exc_spagetti = brfss_exc %>%
     y = "Average Crude Prevalence (%)",
     caption = "From BRFSS Excellent Responses")
 
-brfss_exc_spagetti + labs(color = "STATES")
+brfss_exc_spaghetti + labs(color = "STATES")
 
 ```
 
-In this part, I made a panel plot for the data from 2006 and 2010, focusing on the distribution of crude prevalence percentage for different response levels ("Poor", "Fair", "Good", "Very good", "Excellent"), among different counties of Ny State. 
-```{r panel_plot}
+**Part c**
 
-library("patchwork")
+In this part, I made a two-panel plot for the data from 2006 and 2010, focusing on the distribution of crude prevalence percentage for different response levels ("Poor", "Fair", "Good", "Very good", "Excellent"), among different counties of Ny State. 
+
+```{r problem2_c}
 
 plot_2006 = brfss_data %>%
   filter(
@@ -198,7 +206,7 @@ plot_2006 = brfss_data %>%
   geom_line() +
   labs(
     title = "Distribution of Crude Prevalence in NY Counties - 2006",
-    x = "Response Level",
+    x = NULL,
     y = "Crude Prevalence (%)",
     caption = NULL
   ) +
@@ -230,7 +238,13 @@ plot_2010 = brfss_data %>%
 ```
 
 ## Problem 3
-```{r prob3_load}
+
+**Problem3_a**
+
+This problem is about the _accel_data_ recorded by researchers from a man, over every hour of all days of the week (5 weeks in total). In the first part, I tidied the data without loosing any information, and tried to rearrange it in a away that is more readable, understandable, and human-friendly! I also added a column that indicates whether the associated data has been collected during weekday or weekend.
+
+```{r prob3_a}
+
 accel_data = read_csv("./data/accel_data.csv") 
 
 accel_data_tidy = accel_data %>% 
@@ -238,24 +252,32 @@ accel_data_tidy = accel_data %>%
   pivot_longer(
     cols = activity_1:activity_1440,
     names_to = "activity_number",
-    values_to = "value",
+    values_to = "activity_amount",
     names_prefix = "activity_"
   ) %>%
-  select(activity_number, week, day, day_id, value) %>% 
+  rename(
+    day_of_week = day
+  ) %>% 
+  select(activity_number, activity_amount, week, day_id, day_of_week) %>% 
+  arrange(activity_number) %>% 
   mutate(
-    is_weekend = (day == "Saturday" | day == "Sunday")
+    is_weekend = (day_of_week == "Saturday" | day_of_week == "Sunday")
   )
 
 accel_data_tidy
 ```
- DESCRIBE IT
+
+After tidying the data, out dataframe has been converted to a `r dim(accel_data_tidy)` dataset, containg `r nrow(accel_data_tidy)` observations of `r ncol(accel_data_tidy)` variables. These variables include _activity_number_, _week_, _day_of_week_, _day_id_, _activity_amount_, and _is_weekend_ and has been arranged according to activity number.
  
+ **Problem3_b**
+ 
+ In this part of problem 3, I 
 ```{r}
 
 total_activity_table = accel_data_tidy %>% 
   group_by(day_id) %>% 
-  summarise(
-    total_activity = sum(value)
+  summarize(
+    total_activity = sum(activity_amount)
   )
 
 total_activity_plot = total_activity_table %>% 
@@ -274,11 +296,11 @@ activity_day_amount = accel_data_tidy %>%
   mutate(
     activity_number = as.numeric(as.character(activity_number))
   ) %>% 
-  group_by(day, activity_number) %>% 
+  group_by(day_of_week, activity_number) %>% 
   summarize(
-    mean_activity_day = mean(value)
+    mean_activity_day = mean(activity_amount)
   ) %>% 
-  ggplot(aes(x = activity_number, y = mean_activity_day, color = day, group = day)) +
+  ggplot(aes(x = activity_number, y = mean_activity_day, color = day_of_week, group = day_of_week)) +
   geom_smooth(se = FALSE) +
   labs(
     title = "Average Activity over 24 hours for Each Day",
