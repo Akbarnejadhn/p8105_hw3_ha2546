@@ -271,8 +271,7 @@ After tidying the data, out dataframe has been converted to a `r dim(accel_data_
  
  **Problem3_b**
  
- In this part of problem 3, I 
-```{r}
+```{r prob3_b}
 
 total_activity_table = accel_data_tidy %>% 
   group_by(day_id) %>% 
@@ -283,12 +282,19 @@ total_activity_table = accel_data_tidy %>%
 total_activity_plot = total_activity_table %>% 
   ggplot(aes(x = day_id, y = total_activity)) +
   geom_point() + 
-  geom_line()
+  geom_line() +
+  labs(
+    title = "Total Activity Amount by Day",
+    x = "Day ID",
+    y = "Total Activity",
+    caption = NULL
+  )
 
 total_activity_table
 total_activity_plot
 ```
-Describe Trends
+
+In this part of problem 3, I created a variable called _total_activity_ that shows the total activity for each day, and I then created a table showing these totals. As the trends were not very intuitive to me from the values in the table, I also created a very rough point and line plot to explore any trends. Although there are a lot of fluctuations through this data, we can rughly observe that just by scanning the results, it seems that the person have been on average a little more active during the first half of days he was tested on.
 
 ```{r}
 
