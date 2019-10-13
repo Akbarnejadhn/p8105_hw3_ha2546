@@ -26,23 +26,20 @@ options(
 scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 theme_set(theme_classic())
-# theme(legend.position = "bottom"))
+```
+
+```{r Prob1_a}
 
 library(p8105.datasets)
 data("instacart")
+
+instacart_desc = instacart %>% 
+  filter(
+    order_id == 112
+  )
 ```
 
-```{r random_sample}
-
-# set.seed(5)
-# random_sample = instacart %>%
-#   filter(
-#   sample(pull(instacart, order_id))
-#   )
-
-```
-
-In the first problem, we are interested in exploring the _instacart_ dataset. This dataset stores information about online grocery shopping from 2017. The datset contains `r nrow(instacart)` observations of `r n_distinct(pull(instacart, order_id))` unique orders of `r n_distinct(pull(instacart, product_name))` differennt products. There are `r ncol(instacart)` variables associated with these rows such as _order_dow_ (the day of the week that the order has been placed), _order_hour_of_day_ (the time of the day that the order has been placed), _product_name_ (the item purchased), _aisle_ (the aisle that the item has chosen from), etc. We can take differenvt samples from this dataset.
+In the first problem, we are interested in exploring the _instacart_ dataset. This dataset stores information about online grocery shopping in 2017. The datset contains `r nrow(instacart)` observations of `r n_distinct(pull(instacart, order_id))` unique orders of `r n_distinct(pull(instacart, product_name))` differennt products. There are `r ncol(instacart)` variables associated with these rows such as _order_dow_ (the day of the week that the order has been placed), _order_hour_of_day_ (the time of the day that the order has been placed), _product_name_ (the item purchased), _aisle_ (the aisle that the item has chosen from), etc. For example, we can see that ordere with _order_id_ 112 contained `r nrow(instacart_desc)` items including `r head(pull(instacart_desc, product_name), 3)` from `r head(pull(instacart_desc, department), 3)` departments. These products has been chosen from aisles `r head(pull(instacart_desc, aisle_id), 3)` which are associated with the `r head(pull(instacart_desc, aisle), 3)` aisles, respectively. This order has been placed on Thursday at `r head(pull(instacart_desc, order_hour_of_day), 1)`, and `r head(pull(instacart_desc, days_since_prior_order), 1)` days after the pripr order of this customer (with the customer ID: `r head(pull(instacart_desc, user_id), 1)`).
 
 ## Problem1
 
